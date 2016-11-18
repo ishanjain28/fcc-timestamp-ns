@@ -1,0 +1,23 @@
+{
+  "name": "fcc-timestamp-ns",
+  "version": "1.0.0",
+  "description": "Timestamp-ns application for Backend Projects on Freecodecamp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ishanjain28/fcc-timestamp-ns.git"
+  },
+  "keywords": [
+    "Freecodecamp",
+    "nodejs"
+  ],
+  "author": "Ishan Jain <ishanjain28@gmail.com> (github.com/ishanjain28)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ishanjain28/fcc-timestamp-ns/issues"
+  },
+  "homepage": "https://github.com/ishanjain28/fcc-timestamp-ns#readme"
+}

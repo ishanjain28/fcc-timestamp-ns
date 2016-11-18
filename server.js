@@ -1,8 +1,7 @@
 'use strict';
 
-const express = require('express');
+const http = require('http');
 
-let app = express();
 let PORT = process.env.PORT || 5000;
 
 let MonthNumber = (monthName) => {
@@ -27,9 +26,6 @@ let MonthNumber = (monthName) => {
         return false;
     }
 }
-app.listen(PORT, () => {
-    process.stdout.write("Server Started on http://localhost:" + PORT + "\n");
-});
 const template = () => {
     return (`
     <html>
@@ -54,38 +50,43 @@ const template = () => {
     </html>
     `);
 }
-app.get('/', (req, res) => {
-    res.send(template());
-});
+const server = http.createServer((req, res) => {
+    if (req.url == '/') {
+        res.end(template());
+    } else if (req.url) {
+        let time = req.url.substr(1);
+        if (parseInt(time).toString().length == 10) {
+            let date = new Date(parseInt(time) * 1000);
+            let formatDate = new Intl.DateTimeFormat('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric'
+            }).format(date);
+            res.end(JSON.stringify({
+                "unix": parseInt(time),
+                "natural": formatDate
+            }));
 
-app.get('/:time', (req, res) => {
-    let time = req.params['time'];
-    if (parseInt(time).toString().length == 10) {
-        let date = new Date(parseInt(time) * 1000);
-        let formatDate = new Intl.DateTimeFormat('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric'
-        }).format(date);
-
-        res.send({
-            "unix": parseInt(time),
-            "natural": formatDate
-        });
-
-    } else if (checkProperNormalDate(time)) {
-        let timeArray = time.replace(',', '').split(" ");
-        let unixTime = Date.parse(new Date(timeArray[2] + "." + MonthNumber(timeArray[0]) + "." + timeArray[1])) / 1000;
-        res.send({
-            "unix": unixTime,
-            "natural": time
-        });
-    } else {
-        res.send("Please Enter a valid date");
+        } else if (checkProperNormalDate(time)) {
+            let timeArray = time.split("%20").join(" ").replace(',', '').split(" ");
+            let unixTime = Date.parse(new Date(timeArray[2] + "." + MonthNumber(timeArray[0]) + "." + timeArray[1])) / 1000;
+            res.end(JSON.stringify({
+                "unix": unixTime,
+                "natural": time.split("%20").join(" ")
+            }));
+        } else {
+            res.end("Please Enter a valid date");
+        }
     }
 });
 
 function checkProperNormalDate(time) {
-    let timesplit = time.replace(',', '').split(" ");
+    let timesplit = time.split("%20").join(" ").replace(',', '').split(" ");
     return timesplit.indexOf('') == -1 && timesplit[1] <= 31 && timesplit[2].toString().length == 4 && MonthNumber(timesplit[0]);
 }
+
+server.listen(PORT);
+
+server.on('clientError', (err, socket) => {
+    socket.end('HTTP/1.1 400 Bad Request\r\n\r\n');
+});

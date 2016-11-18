@@ -20,7 +20,5 @@
     "url": "https://github.com/ishanjain28/fcc-timestamp-ns/issues"
   },
   "homepage": "https://github.com/ishanjain28/fcc-timestamp-ns#readme",
-  "dependencies": {
-    "express": "^4.14.0"
-  }
+  "dependencies": {}
 }

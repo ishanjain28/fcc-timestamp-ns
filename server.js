@@ -5,59 +5,26 @@ const express = require('express');
 let app = express();
 let PORT = process.env.PORT || 5000;
 
-let MonthName = (monthNumber) => {
-    const actions = {
-        1: () => { return "January"; },
-        2: () => { return "February"; },
-        3: () => { return "March"; },
-        4: () => { return "April"; },
-        5: () => { return "May"; },
-        6: () => { return "June"; },
-        7: () => { return "July"; },
-        8: () => { return "August"; },
-        9: () => { return "September"; },
-        10: () => { return "October"; },
-        11: () => { return "November"; },
-        12: () => { return "December"; }
-    }
-    return actions[monthNumber]();
-}
 let MonthNumber = (monthName) => {
-    if (monthName.indexOf('Dec') || monthName.indexOf('dec')) {
-        return 12;
+    let monthNameStr = monthName.substr(0, 3).toLowerCase();
+    const actions = {
+        "dec": () => { return 12 },
+        "nov": () => { return 11 },
+        "oct": () => { return 10 },
+        "sep": () => { return 9 },
+        "aug": () => { return 8 },
+        "jul": () => { return 7 },
+        "jun": () => { return 6 },
+        "may": () => { return 5 },
+        "apr": () => { return 4 },
+        "mar": () => { return 3 },
+        "feb": () => { return 2 },
+        "jan": () => { return 1 },
     }
-    if (monthName.indexOf('Nov') || monthName.indexOf('nov')) {
-        return 11;
-    }
-    if (monthName.indexOf('Oct') || monthName.indexOf('oct')) {
-        return 10;
-    }
-    if (monthName.indexOf('Sept') || monthName.indexOf('sept')) {
-        return 9;
-    }
-    if (monthName.indexOf('Aug') || monthName.indexOf('aug')) {
-        return 8;
-    }
-    if (monthName.indexOf('July') || monthName.indexOf('july')) {
-        return 7;
-    }
-    if (monthName.indexOf('June') || monthName.indexOf('june')) {
-        return 6;
-    }
-    if (monthName.indexOf('May') || monthName.indexOf('may')) {
-        return 5;
-    }
-    if (monthName.indexOf('April') || monthName.indexOf('april')) {
-        return 4;
-    }
-    if (monthName.indexOf('March') || monthName.indexOf('march')) {
-        return 3;
-    }
-    if (monthName.indexOf('Feb') || monthName.indexOf('feb')) {
-        return 2;
-    }
-    if (monthName.indexOf('Jan') || monthName.indexOf('jan')) {
-        return 1;
+    if (monthName && Object.keys(actions).indexOf(monthNameStr) != -1) {
+        return actions[monthNameStr]();
+    } else {
+        return false;
     }
 }
 app.listen(PORT, () => {
@@ -108,7 +75,7 @@ app.get('/:time', (req, res) => {
 
     } else if (checkProperNormalDate(time)) {
         let timeArray = time.replace(',', '').split(" ");
-        let unixTime = Date.parse(new Date(timeArray[2] + "." + MonthNumber(time[0]) + "." + timeArray[1])) / 1000;
+        let unixTime = Date.parse(new Date(timeArray[2] + "." + MonthNumber(timeArray[0]) + "." + timeArray[1])) / 1000;
         res.send({
             "unix": unixTime,
             "natural": time
@@ -119,5 +86,6 @@ app.get('/:time', (req, res) => {
 });
 
 function checkProperNormalDate(time) {
-    return time.replace(',', '').split(" ").indexOf('') == -1;
+    let timesplit = time.replace(',', '').split(" ");
+    return timesplit.indexOf('') == -1 && timesplit[1] <= 31 && timesplit[2].toString().length == 4 && MonthNumber(timesplit[0]);
 }

@@ -106,7 +106,7 @@ app.get('/:time', (req, res, next) => {
             "natural": formatDate
         });
 
-    } else if (time.replace(",", "").split(" ").length == 3) {
+    } else if (checkProperNormalDate(time)) {
         let timeArray = time.replace(',', '').split(" ");
         let unixTime = Date.parse(new Date(timeArray[2] + "." + MonthNumber(time[0]) + "." + timeArray[1])) / 1000;
         res.send({
@@ -118,3 +118,6 @@ app.get('/:time', (req, res, next) => {
     }
 });
 
+function checkProperNormalDate(time) {
+    return time.replace(',', '').split(" ").indexOf('') == -1;
+}

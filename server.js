@@ -61,7 +61,7 @@ let MonthNumber = (monthName) => {
     }
 }
 app.listen(PORT, () => {
-    console.log("Server Started on http://localhost:" + PORT);
+    process.stdout.write("Server Started on http://localhost:" + PORT + "\n");
 });
 const template = () => {
     return (`
@@ -87,11 +87,11 @@ const template = () => {
     </html>
     `);
 }
-app.get('/', (req, res, next) => {
+app.get('/', (req, res) => {
     res.send(template());
 });
 
-app.get('/:time', (req, res, next) => {
+app.get('/:time', (req, res) => {
     let time = req.params['time'];
     if (parseInt(time).toString().length == 10) {
         let date = new Date(parseInt(time) * 1000);
